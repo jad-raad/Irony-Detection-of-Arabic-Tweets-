@@ -2,6 +2,24 @@
 
 This project investigates irony detection in Lebanese dialect comments on Twitter to enhance digital communication understanding.
 
+# Installation
+
+To set up this project, follow these steps:
+
+1. Clone the repository:
+
+   `bash`
+   git clone https://github.com/your-username/your-repository.git
+
+2. cd your-repository
+
+3. python -m venv venv
+   .\venv\Scripts\activate
+
+4. pip install -r requirements.txt
+
+5. Add the arabic embedding file
+
 # Arabic Embedding file
 
 The Arabic word embedding file mentioned in the config (wiki.ar.vec) is from the FastText pre-trained word vectors. You can download it from the official FastText website. Here's how you can get it:
