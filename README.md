@@ -9,14 +9,14 @@ To set up this project, follow these steps:
 1. Clone the repository:
 
    `bash`
-   git clone https://github.com/your-username/your-repository.git
+   `git clone https://github.com/your-username/your-repository.git`
 
 2. cd your-repository
 
-3. python -m venv venv
-   .\venv\Scripts\activate
+3. `python -m venv venv`
+   `.\venv\Scripts\activate`
 
-4. pip install -r requirements.txt
+4. `pip install -r requirements.txt`
 
 5. Add the arabic embedding file
 
