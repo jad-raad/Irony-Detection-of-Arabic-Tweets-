@@ -1,7 +1,7 @@
 # Irony-Detection-of-Arabic-Tweets-
 
-This project investigates irony detection in Lebanese dialect comments on Twitter to enhance digital communication understanding.We will collect tweets from Lebanese users and manually annotate them to create a dataset. Using this dataset, we will train a neural network, aiming for an initial accuracy of over 78% in classifying tweets. The project aims to contribute to sentiment analysis by addressing challenges in multilingual contexts.
-This project also represents my senior project for a BS in Computer science at Phoenicia University
+. This project investigates irony detection in Lebanese dialect comments on Twitter to enhance digital communication understanding.We will collect tweets from Lebanese users and manually annotate them to create a dataset. Using this dataset, we will train a neural network, aiming for an initial accuracy of over 78% in classifying tweets. The project aims to contribute to sentiment analysis by addressing challenges in multilingual contexts.
+. This project also represents my senior project for a BS in Computer science at Phoenicia University
 
 # Installation
 
