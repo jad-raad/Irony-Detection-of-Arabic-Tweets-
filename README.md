@@ -1,4 +1,4 @@
-# Irony-Detection-of-Arabic-Tweets-
+# Irony Detection of Arabic Tweets
 
 This project investigates irony detection in Arabic dialect comments on Twitter to enhance digital communication understanding.We will collect tweets from Arab users and manually annotate them to create a dataset. Using this dataset, we will train a neural network, bert model, and an arabert model aiming for an initial accuracy of over 78% in classifying tweets. The project aims to contribute to sentiment analysis by addressing challenges in multilingual contexts.
 
