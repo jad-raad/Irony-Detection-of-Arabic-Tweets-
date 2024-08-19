@@ -1,6 +1,8 @@
 # Irony-Detection-of-Arabic-Tweets-
 
-This project investigates irony detection in Lebanese dialect comments on Twitter to enhance digital communication understanding.
+This project investigates irony detection in Arabic dialect comments on Twitter to enhance digital communication understanding.We will collect tweets from Arab users and manually annotate them to create a dataset. Using this dataset, we will train a neural network, bert model, and an arabert model. The project aims to contribute to sentiment analysis by addressing challenges in multilingual contexts.
+<br/>
+This project also represents my senior project for a BS in Computer science at Phoenicia University
 
 # Installation
 
@@ -8,12 +10,11 @@ To set up this project, follow these steps:
 
 1. Clone the repository:
 
-   `bash`
-   `git clone https://github.com/your-username/your-repository.git`
+   `git clone https://github.com/jad-raad/Irony-Detection-of-Arabic-Tweets-`
 
 2. cd your-repository
 
-3. `python -m venv venv`
+3. `python -m venv venv` <br/>
    `.\venv\Scripts\activate`
 
 4. `pip install -r requirements.txt`
@@ -38,3 +39,15 @@ The Arabic word embedding file mentioned in the config (wiki.ar.vec) is from the
 6. After extraction, you should have a file with the .vec extension, which you can rename to wiki.ar.vec
 
 7. Place this file in the /data/fasttext/ directory of your project (or update the config file to point to wherever you place it)
+
+# All Bert Models Installation
+
+It is recommended to run BERT models on google colab in order to utilize the T4 gpu of colab
+
+1. Upload the entire project without the fasttext file and the environments into your google drive
+
+2. Connect google colab to your personal drive
+
+3. Run the allBertExamples.ipynb file and check the results
+
+4. NOTE: google colab already supports all requirements for the bert examples, thus there is no need for installing libraries

@@ -139,3 +139,4 @@ if __name__ == "__main__":
     print("Weighted F1 ", weighted_f1)
     print("Weighted Recall ", weighted_recall)
     print("Weighted Precision ", weighted_precision)
+
