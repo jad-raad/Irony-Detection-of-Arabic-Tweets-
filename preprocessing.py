@@ -27,6 +27,14 @@ def remove_names(x):
     return x
 
 
+def remove_tags(x):
+    # Pattern to match any text enclosed between colons (e.g., :example:)
+    pattern = r':[^:]+:'
+    # Replace matching patterns with an empty string
+    x = re.sub(pattern, '', x)
+    return x
+
+
 def sep_digits(x):
     return " ".join(re.split('(\d+)', x))
 

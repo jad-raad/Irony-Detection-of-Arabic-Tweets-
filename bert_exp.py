@@ -35,19 +35,15 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 
 # Define the f1_smart function as needed
-'''
-Beneficial when you want to fine-tune the threshold to achieve the best possible F1 score,
-especially in cases where the distribution of classes or the cost of false positives and false negatives varies.
-'''
 def f1_smart(y_true, y_pred_probs):
     thresholds = np.arange(0.0, 1.1, 0.01)
     f1_scores = []
-    
+
     for threshold in thresholds:
         y_pred = (y_pred_probs > threshold).astype(int)
         f1 = f1_score(y_true, y_pred)
         f1_scores.append(f1)
-    
+
     optimal_idx = np.argmax(f1_scores)
     optimal_f1 = f1_scores[optimal_idx]
     optimal_threshold = thresholds[optimal_idx]
@@ -60,12 +56,12 @@ torch.manual_seed(726)
 
 # Define paths directly
 MODEL_PATH = "models/capsule_weights_best.pth"
-PREDICTION_FILE = "predictions/bert_predictions.csv"
+PREDICTION_FILE = "bert_predictions.csv"
 
 # Create the directory if it does not exist
 os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
 
-# Correct file path
+# Correct file path for colab
 file_path = 'data/arabic/training.csv'
 
 # Read the CSV file
@@ -161,10 +157,16 @@ def train_model(model, dataloader, optimizer, device):
 
 # Training the model
 kfold = StratifiedKFold(n_splits=5, random_state=10, shuffle=True)
-bestscore = []
+
+best_f1_scores = []
+best_fold_metrics = {}
+best_fold_conf_matrix = None
+best_fold_index = -1
 y_test = np.zeros((len(Y_test),))
 
-for i, (train_index, valid_index) in enumerate(kfold.split(train_encodings['input_ids'], Y_train)):
+for fold, (train_index, valid_index) in enumerate(kfold.split(train_encodings['input_ids'], Y_train)):
+    print(f"Starting fold {fold+1}")
+
     X_train_encodings = {
         'input_ids': torch.tensor(np.array(train_encodings['input_ids'])[train_index]),
         'attention_mask': torch.tensor(np.array(train_encodings['attention_mask'])[train_index]),
@@ -185,14 +187,14 @@ for i, (train_index, valid_index) in enumerate(kfold.split(train_encodings['inpu
 
     # Training
     train_model(model, train_split_dataloader, optimizer, device)
-    
+
     # Save the best model weights
     torch.save(model.state_dict(), MODEL_PATH)
-    
+
     # Load the best model weights
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
-    
+
     # Predict and calculate F1 score
     all_preds = []
     all_labels = []
@@ -206,10 +208,25 @@ for i, (train_index, valid_index) in enumerate(kfold.split(train_encodings['inpu
             preds = torch.argmax(logits, dim=1)
             all_preds.extend(preds.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
-    
+
     f1, threshold = f1_smart(np.array(all_labels), np.array(all_preds))
-    print('Optimal F1: {:.4f} at threshold: {:.4f}'.format(f1, threshold))
-    bestscore.append(threshold)
+    accuracy = accuracy_score(all_labels, all_preds)
+    recall = recall_score(all_labels, all_preds)
+    precision = precision_score(all_labels, all_preds)
+    tn, fp, fn, tp = confusion_matrix(all_labels, all_preds).ravel()
+
+    print(f"Fold {fold+1} - F1: {f1:.4f}, Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}")
+
+    if not best_f1_scores or f1 > max(best_f1_scores):
+        best_f1_scores.append(f1)
+        best_fold_metrics = {
+            'f1': f1,
+            'accuracy': accuracy,
+            'recall': recall,
+            'precision': precision,
+        }
+        best_fold_conf_matrix = (tn, fp, fn, tp)
+        best_fold_index = fold + 1
 
     # Prediction on the test set
     all_test_preds = []
@@ -223,7 +240,7 @@ for i, (train_index, valid_index) in enumerate(kfold.split(train_encodings['inpu
             logits = outputs.logits
             preds = torch.argmax(logits, dim=1)
             all_test_preds.extend(preds.cpu().numpy())
-    
+
     y_test_pred = np.array(all_test_preds)
     y_test += y_test_pred / kfold.n_splits
 
@@ -231,22 +248,17 @@ print('Finished Training')
 
 # Final predictions on the test set
 y_test = y_test.reshape((-1, 1))
-pred_test_y = (y_test > np.mean(bestscore)).astype(int)
+pred_test_y = (y_test > np.mean(best_f1_scores)).astype(int)
 test['predictions'] = pred_test_y
 
 # Save predictions
 test.to_csv(PREDICTION_FILE, sep='\t', encoding='utf-8')
 print('Saved Predictions')
 
-# Post analysis
-tn, fp, fn, tp = confusion_matrix(test[LABEL_COLUMN], test['predictions']).ravel()
-weighted_f1 = f1_score(test[LABEL_COLUMN], test['predictions'], average='weighted')
-accuracy = accuracy_score(test[LABEL_COLUMN], test['predictions'])
-weighted_recall = recall_score(test[LABEL_COLUMN], test['predictions'], average='weighted')
-weighted_precision = precision_score(test[LABEL_COLUMN], test['predictions'], average='weighted')
-
-print("Confusion Matrix (tn, fp, fn, tp) {} {} {} {}".format(tn, fp, fn, tp))
-print("Accuracy ", accuracy)
-print("Weighted F1 ", weighted_f1)
-print("Weighted Recall ", weighted_recall)
-print("Weighted Precision ", weighted_precision)
+# Print the best fold metrics
+print(f"Best Fold: {best_fold_index}")
+print(f"Best F1: {best_fold_metrics['f1']:.4f}")
+print(f"Best Accuracy: {best_fold_metrics['accuracy']:.4f}")
+print(f"Best Precision: {best_fold_metrics['precision']:.4f}")
+print(f"Best Recall: {best_fold_metrics['recall']:.4f}")
+print("Best Confusion Matrix (tn, fp, fn, tp):", best_fold_conf_matrix)
