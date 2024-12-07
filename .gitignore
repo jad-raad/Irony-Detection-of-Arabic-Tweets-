@@ -1,0 +1,5 @@
+data/fasttext/wiki.ar.vec
+__pycache__/preprocessing.cpython-37.pyc
+models/capsule_weights_best.h5
+models/capsule_weights_best.h5
+myenv/
