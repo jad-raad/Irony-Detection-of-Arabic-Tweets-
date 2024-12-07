@@ -5,7 +5,7 @@ This project investigates irony detection in Arabic dialect comments on Twitter 
 <br/>
 This project also represents my senior project for a BS in Computer science at Phoenicia University
 # Installation
-#You need python 3.7 for the CNN Model in your environment
+# You need python 3.7 for the CNN Model in your environment
 
 To set up this project, follow these steps:
 
